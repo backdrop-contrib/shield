@@ -1,0 +1,3 @@
+name = "PHP Authentication shield"
+description = "Creates a general shield for the site"
+core = "6.x"
