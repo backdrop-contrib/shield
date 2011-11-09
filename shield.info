@@ -1,3 +1,6 @@
-name = "PHP Authentication shield"
-description = "Creates a general shield for the site"
-core = "6.x"
+name = PHP Authentication shield
+description = Creates a general shield for the site
+core = 7.x
+
+;files[] = shield.install
+;files[] = shield.module
