@@ -79,6 +79,11 @@ function shield_boot() {
   }
   $pass = variable_get('shield_pass', '');
 
+  // allow Drush to bypass Shield
+  if (php_sapi_name() == 'cli') {
+    return;
+  }
+
   if (!empty($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])
       && $_SERVER['PHP_AUTH_USER'] == $user
       && $_SERVER['PHP_AUTH_PW']   == $pass) {
