@@ -47,16 +47,6 @@ function shield_admin_settings() {
     '#title' => t('General settings'),
    );
 
-   $form['general']['shield_state'] = array(
-    '#type' => 'radios',
-    '#title' => t("Turn the shield on/off"),
-    '#default_value' => variable_get('shield_state', 1),
-    '#options' => array(
-       '0' => t('Turn off'),
-       '1' => t('Turn on'),
-    )
-  );
-
   $form['general']['shield_allow_cli'] = array(
     '#type' => 'checkbox',
     '#title' => t("Allow command line access"),
@@ -95,10 +85,6 @@ function shield_admin_settings() {
  * Implements hook_boot().
  */
 function shield_boot() {
-  if (variable_get('shield_state', 1) == 0) {
-    return;
-  }
-
   $user = variable_get('shield_user', '');
   if (!$user) {
     return;
