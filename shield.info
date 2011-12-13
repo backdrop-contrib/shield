@@ -5,4 +5,4 @@ core = 7.x
 ;files[] = shield.install
 ;files[] = shield.module
 
-configure = admin/config/shield/settings
+configure = admin/config/system/shield

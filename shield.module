@@ -42,6 +42,28 @@ function shield_admin_settings() {
     '#description' => t('Set up credentials for an authenticated user. You can also decide whether you want to print out the credentials or not.'),
   );
 
+  $form['general'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('General settings'),
+   );
+
+   $form['general']['shield_state'] = array(
+    '#type' => 'radios',
+    '#title' => t("Turn the shield on/off"),
+    '#default_value' => variable_get('shield_state', 1),
+    '#options' => array(
+       '0' => t('Turn off'),
+       '1' => t('Turn on'),
+    )
+  );
+
+  $form['general']['shield_allow_cli'] = array(
+    '#type' => 'checkbox',
+    '#title' => t("Allow command line access"),
+    '#description' => t('When the site is accessed from command line (e.g. from Drush, cron), the shield should not work.'),
+    '#default_value' => variable_get('shield_allow_cli', 1),
+  );
+
   $form['credentials'] = array(
     '#type' => 'fieldset',
     '#title' => t('Credentials'),
@@ -73,17 +95,21 @@ function shield_admin_settings() {
  * Implements hook_boot().
  */
 function shield_boot() {
+  if (variable_get('shield_state', 1) == 0) {
+    return;
+  }
+
   $user = variable_get('shield_user', '');
   if (!$user) {
     return;
   }
-  $pass = variable_get('shield_pass', '');
 
   // allow Drush to bypass Shield
-  if (php_sapi_name() == 'cli') {
+  if (php_sapi_name() == 'cli' && variable_get('shield_allow_cli', 1) == 1) {
     return;
   }
 
+  $pass = variable_get('shield_pass', '');
   if (!empty($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])
       && $_SERVER['PHP_AUTH_USER'] == $user
       && $_SERVER['PHP_AUTH_PW']   == $pass) {
