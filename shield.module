@@ -20,11 +20,10 @@ function shield_permission() {
  * Implements hook_menu().
  */
 function shield_menu() {
-  $items['admin/config/shield/settings'] = array(
+  $items['admin/config/system/shield'] = array(
     'title' => 'Shield settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('shield_admin_settings'),
-    'type' => MENU_LOCAL_TASK,
     'weight' => 10,
     'access arguments' => array('administer shield'),
   );
