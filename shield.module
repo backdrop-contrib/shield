@@ -35,7 +35,7 @@ function shield_menu() {
 /**
  * Administration settings form
  */
-function shield_admin_settings() {
+function shield_admin_settings($form, &$form_state) {
   $form['description'] = array(
     '#type' => 'item',
     '#title' => t('Shield settings'),
