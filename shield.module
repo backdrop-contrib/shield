@@ -91,7 +91,7 @@ function shield_boot() {
   }
 
   // allow Drush to bypass Shield
-  if (php_sapi_name() == 'cli' && variable_get('shield_allow_cli', 1) == 1) {
+  if (drupal_is_cli() && variable_get('shield_allow_cli', 1) == 1) {
     return;
   }
 
