@@ -8,7 +8,6 @@
  * Implements hook_uninstall().
  */
 function shield_uninstall() {
-  variable_del('shield_state');
   variable_del('shield_allow_cli');
   variable_del('shield_user');
   variable_del('shield_pass');
