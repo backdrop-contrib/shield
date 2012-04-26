@@ -5,14 +5,6 @@
  */
 
 /**
- * Implements hook_install().
- */
-function shield_install() {
-  variable_set('shield_state', 1);
-  variable_set('shield_allow_cli', 1);
-}
-
-/**
  * Implements hook_uninstall().
  */
 function shield_uninstall() {
