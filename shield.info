@@ -1,5 +1,5 @@
-name = PHP Authentication shield
-description = Creates a general shield for the site
+name = Shield
+description = Creates a general PHP Authentication shield for the site.
 core = 7.x
 
 configure = admin/config/system/shield
