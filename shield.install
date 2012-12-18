@@ -12,4 +12,5 @@ function shield_uninstall() {
   variable_del('shield_user');
   variable_del('shield_pass');
   variable_del('shield_print');
+  variable_del('shield_excluded_paths');
 }
