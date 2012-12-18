@@ -47,6 +47,29 @@ function shield_boot() {
     return;
   }
 
+  // Allow excluded paths to bypass Shield protection.
+  $excluded_paths = variable_get('shield_excluded_paths', '');
+  if (!empty($excluded_paths)) {
+    require_once './includes/unicode.inc';
+    require_once './includes/path.inc';
+    require_once './includes/locale.inc';
+    require_once './includes/language.inc';
+    drupal_language_initialize();
+    $pages = drupal_strtolower($excluded_paths);
+    $path = drupal_strtolower(drupal_get_path_alias($_GET['q']));
+    // Compare the lowercase internal and lowercase path alias (if any).
+    $page_match = drupal_match_path($path, $pages);
+
+    if ($path != $_GET['q']) {
+      $page_match = $page_match || drupal_match_path($_GET['q'], $pages);
+    }
+
+    // We're on a path that is excluded from Shield protection.
+    if ($page_match) {
+      return;
+    }
+  }
+
   $pass = variable_get('shield_pass', '');
   if (!empty($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])
       && $_SERVER['PHP_AUTH_USER'] == $user

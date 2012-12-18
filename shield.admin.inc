@@ -26,6 +26,13 @@ function shield_admin_settings($form, &$form_state) {
     '#default_value' => variable_get('shield_allow_cli', 1),
   );
 
+  $form['general']['shield_excluded_paths'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Exclude these paths from Shield protection'),
+    '#description' => t('Enter a list of paths that should be accessible without Shield credentials. Leave blank to protect all paths.'),
+    '#default_value' => variable_get('shield_excluded_paths', ''),
+  );
+
   $form['credentials'] = array(
     '#type' => 'fieldset',
     '#title' => t('Credentials'),
