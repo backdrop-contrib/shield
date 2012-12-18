@@ -54,8 +54,8 @@ function shield_admin_settings($form, &$form_state) {
   $form['shield_print'] = array(
     '#type' => 'textfield',
     '#title' => t('Authentication message'),
-    '#description' => t("The message to print in the authentication request popup. You can use [user] and [pass] to print the user and the password respectively. You can leave it empty, if you don't want to print out any special message to the users."),
-    '#default_value' => variable_get('shield_print', 'Hello, user: [user], pass: [pass]!'),
+    '#description' => t("The message to print in the authentication request popup. You can use [user] and [pass] to print the user and the password respectively (for example: 'Hello, user: [user], pass: [pass]!'). You can leave it empty, if you don't want to print out any special message to the users."),
+    '#default_value' => variable_get('shield_print', ''),
   );
 
   return system_settings_form($form);
