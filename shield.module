@@ -71,10 +71,28 @@ function shield_boot() {
   }
 
   $pass = variable_get('shield_pass', '');
-  if (!empty($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])
-      && $_SERVER['PHP_AUTH_USER'] == $user
-      && $_SERVER['PHP_AUTH_PW']   == $pass) {
-    return;
+  if (substr(php_sapi_name(), 0, 3) == 'cgi') {
+    // We have (some sort of) CGI.
+    if (isset($_SERVER['FCGI_ROLE'])) {
+      // We have FastCGI.
+      $auth_var = 'REMOTE_USER';
+    }
+    else {
+      // We have plain old CGI.
+      $auth_var = 'REDIRECT_REMOTE_USER';
+    }
+    if (!empty($_SERVER[$auth_var])) {
+      list($redir_user, $redir_pw) = explode(':' , base64_decode(substr($_SERVER[$auth_var], 6)));
+      if ($redir_user == $user && $redir_pw == $pass) {
+        return;
+      }
+    }
+  }
+  else {
+    // We have mod_php.
+    if (!empty($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']) && $_SERVER['PHP_AUTH_USER'] == $user && $_SERVER['PHP_AUTH_PW']   == $pass) {
+      return;
+    }
   }
 
   $print = variable_get('shield_print', 'Hello, user: [user], pass: [pass]!');
