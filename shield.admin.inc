@@ -14,11 +14,11 @@ function shield_admin_settings($form, &$form_state) {
     '#description' => t('Set up credentials for an authenticated user. You can also decide whether you want to print out the credentials or not.'),
   );
 
-  $form['shield_enable'] = array(
+  $form['shield_enabled'] = array(
     '#type' => 'checkbox',
     '#title' => t('Enable shield module'),
     '#description' => t('Set whether shield is active or not.'),
-    '#default_value' => variable_get('shield_enable', 1),
+    '#default_value' => variable_get('shield_enabled', 1),
   );
 
   $form['general'] = array(
