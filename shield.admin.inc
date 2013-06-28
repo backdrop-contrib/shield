@@ -33,6 +33,13 @@ function shield_admin_settings($form, &$form_state) {
     '#default_value' => variable_get('shield_allow_cli', 1),
   );
 
+  $form['general']['shield_allow_cron'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Allow browser and crontab to run <code>@basepathcron.php</code>', array('@basepath' => base_path())),
+    '#description' => t('You will not be able to run cron from the command line or crontab without this option selected.'),
+    '#default_value' => variable_get('shield_allow_cron', 1),
+  );
+
   $methods = array(0 => t('Protect all'), 1 => t('Use excluded method'), 2 => t('Use included method'));
   $form['general']['shield_method'] = array(
     '#type' => 'radios',
