@@ -48,6 +48,11 @@ function shield_boot() {
       return;
     }
 
+    // Allow cron to bypass Shield
+    if (basename($_SERVER['PHP_SELF']) == 'cron.php' && variable_get('shield_allow_cron', 1) == 1) {
+      return;
+    }
+
     // Which method should shield use
     $method = variable_get('shield_method', 0);
     if ($method == 1) {
