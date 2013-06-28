@@ -24,13 +24,22 @@ function shield_admin_settings($form, &$form_state) {
   $form['general'] = array(
     '#type' => 'fieldset',
     '#title' => t('General settings'),
-   );
+  );
 
   $form['general']['shield_allow_cli'] = array(
     '#type' => 'checkbox',
     '#title' => t('Allow command line access'),
     '#description' => t('When the site is accessed from command line (e.g. from Drush, cron), the shield should not work.'),
     '#default_value' => variable_get('shield_allow_cli', 1),
+  );
+
+  $methods = array(0 => t('Protect all'), 1 => t('Use excluded method'), 2 => t('Use included method'));
+  $form['general']['shield_method'] = array(
+    '#type' => 'radios',
+    '#title' => t('Shield method'),
+    '#default_value' => variable_get('shield_method', 0),
+    '#options' => $methods,
+    '#description' => t('Choose which method of shield protection you require. Protect all - require auth on all pages. Excluded method - protect all except these paths. Included method - only protect these paths'),
   );
 
   $form['general']['shield_excluded_paths'] = array(
@@ -40,10 +49,18 @@ function shield_admin_settings($form, &$form_state) {
     '#default_value' => variable_get('shield_excluded_paths', ''),
   );
 
+  $form['general']['shield_included_paths'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Only include these paths in Shield protection'),
+    '#description' => t('Enter a list of paths that should require Shield credentials.'),
+    '#default_value' => variable_get('shield_included_paths', ''),
+  );
+
+
   $form['credentials'] = array(
     '#type' => 'fieldset',
     '#title' => t('Credentials'),
-   );
+  );
 
   $form['credentials']['shield_user'] = array(
     '#type' => 'textfield',
