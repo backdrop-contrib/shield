@@ -15,6 +15,15 @@ function shield_uninstall() {
   variable_del('shield_pass');
   variable_del('shield_print');
   variable_del('shield_method');
+  variable_del('shield_paths');
+}
+
+/**
+ * Moves shield_excluded_paths variable value to shield_paths variable.
+ */
+function shield_update_7001(&$sandbox) {
+  variable_set('shield_paths', variable_get('shield_excluded_paths', ''));
   variable_del('shield_excluded_paths');
-  variable_del('shield_included_paths');
+
+  return t('"shield_excluded_paths" value is moved to "shield_paths" and the unused variable is deleted.');
 }

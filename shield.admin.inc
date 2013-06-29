@@ -40,29 +40,21 @@ function shield_admin_settings($form, &$form_state) {
     '#default_value' => variable_get('shield_allow_cron', 1),
   );
 
-  $methods = array(0 => t('Protect all'), 1 => t('Use excluded method'), 2 => t('Use included method'));
+  $methods = array(1 => t('Shield all except the following paths (exclude)'), 2 => t('Shield no paths except the following (include)'));
   $form['general']['shield_method'] = array(
     '#type' => 'radios',
     '#title' => t('Shield method'),
-    '#default_value' => variable_get('shield_method', 0),
+    '#default_value' => variable_get('shield_method', 1),
     '#options' => $methods,
-    '#description' => t('Choose which method of shield protection you require. Protect all - require auth on all pages. Excluded method - protect all except these paths. Included method - only protect these paths'),
+    '#description' => t('Choose which method of shield protection you require.'),
   );
 
-  $form['general']['shield_excluded_paths'] = array(
+  $form['general']['shield_paths'] = array(
     '#type' => 'textarea',
-    '#title' => t('Exclude these paths from Shield protection'),
-    '#description' => t('Enter a list of paths that should be accessible without Shield credentials. Leave blank to protect all paths.'),
-    '#default_value' => variable_get('shield_excluded_paths', ''),
+    '#title' => t('Paths'),
+    '#description' => t('According to the Shield method selected above, these paths will be either excluded from, or included in Shield protection. Leave this blank and select "exclude" to protect all paths.'),
+    '#default_value' => variable_get('shield_paths', ''),
   );
-
-  $form['general']['shield_included_paths'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Only include these paths in Shield protection'),
-    '#description' => t('Enter a list of paths that should require Shield credentials.'),
-    '#default_value' => variable_get('shield_included_paths', ''),
-  );
-
 
   $form['credentials'] = array(
     '#type' => 'fieldset',
