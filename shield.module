@@ -53,55 +53,40 @@ function shield_boot() {
       return;
     }
 
-    // Which method should shield use
-    $method = variable_get('shield_method', 0);
-    if ($method == 1) {
-      // Allow excluded paths to bypass Shield protection.
-      $excluded_paths = variable_get('shield_excluded_paths', '');
-      if (!empty($excluded_paths)) {
-        require_once './includes/unicode.inc';
-        require_once './includes/path.inc';
-        require_once './includes/locale.inc';
-        require_once './includes/language.inc';
-        drupal_language_initialize();
-        $pages = drupal_strtolower($excluded_paths);
-        $path = drupal_strtolower(drupal_get_path_alias($_GET['q']));
-        // Compare the lowercase internal and lowercase path alias (if any).
-        $page_match = drupal_match_path($path, $pages);
+    $paths = variable_get('shield_paths', '');
+    $page_match = FALSE;
+    // Compare paths, if any have been set
+    if (!empty($paths)) {
+      require_once './includes/unicode.inc';
+      require_once './includes/path.inc';
+      require_once './includes/locale.inc';
+      require_once './includes/language.inc';
+      drupal_language_initialize();
+      $pages = drupal_strtolower($paths);
+      $path = drupal_strtolower(drupal_get_path_alias($_GET['q']));
+      // Compare the lowercase internal and lowercase path alias (if any).
+      $page_match = drupal_match_path($path, $pages);
+      if ($path != $_GET['q']) {
+        $page_match = $page_match || drupal_match_path($_GET['q'], $pages);
+      }
+    }
+    // Enable shield or not, depending on shield_method
+    $method = variable_get('shield_method', 1);
 
-        if ($path != $_GET['q']) {
-          $page_match = $page_match || drupal_match_path($_GET['q'], $pages);
-        }
-
-        // We're on a path that is excluded from Shield protection.
+    switch ($method) {
+      case 1:
+        // Exclude matched paths from shield protection.
         if ($page_match) {
           return;
         }
-      }
-    }
-    elseif ($method == 2) {
-      // Allow all except the included paths
-      $included_paths = variable_get('shield_included_paths', '');
-      if (!empty($included_paths)) {
-        require_once './includes/unicode.inc';
-        require_once './includes/path.inc';
-        require_once './includes/locale.inc';
-        require_once './includes/language.inc';
-        drupal_language_initialize();
-        $pages = drupal_strtolower($included_paths);
-        $path = drupal_strtolower(drupal_get_path_alias($_GET['q']));
-        // Compare the lowercase internal and lowercase path alias (if any).
-        $page_match = drupal_match_path($path, $pages);
+        break;
 
-        if ($path != $_GET['q']) {
-          $page_match = $page_match || drupal_match_path($_GET['q'], $pages);
-        }
-
-        // We're on a path that is excluded from Shield protection.
+      case 2:
+        // Exclude all un-matched paths from shield protection.
         if (!$page_match) {
           return;
         }
-      }
+        break;
     }
 
     $pass = variable_get('shield_pass', '');
