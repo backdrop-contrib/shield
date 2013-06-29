@@ -43,19 +43,19 @@ function shield_boot() {
       return;
     }
 
-    // allow Drush to bypass Shield
+    // Allow Drush to bypass Shield.
     if (drupal_is_cli() && variable_get('shield_allow_cli', 1) == 1) {
       return;
     }
 
-    // Allow cron to bypass Shield
+    // Allow cron to bypass Shield.
     if (basename($_SERVER['PHP_SELF']) == 'cron.php' && variable_get('shield_allow_cron', 1) == 1) {
       return;
     }
 
     $paths = variable_get('shield_paths', '');
     $page_match = FALSE;
-    // Compare paths, if any have been set
+    // Compare paths, if any have been set.
     if (!empty($paths)) {
       require_once './includes/unicode.inc';
       require_once './includes/path.inc';
@@ -70,7 +70,7 @@ function shield_boot() {
         $page_match = $page_match || drupal_match_path($_GET['q'], $pages);
       }
     }
-    // Enable shield or not, depending on shield_method
+    // Enable shield or not, depending on shield_method.
     $method = variable_get('shield_method', 1);
 
     switch ($method) {

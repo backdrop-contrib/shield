@@ -5,7 +5,7 @@
  */
 
 /**
- * Administration settings form
+ * Generates and admin settings form.
  */
 function shield_admin_settings($form, &$form_state) {
   $form['description'] = array(
