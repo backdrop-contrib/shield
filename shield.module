@@ -57,10 +57,10 @@ function shield_boot() {
     $page_match = FALSE;
     // Compare paths, if any have been set.
     if (!empty($paths)) {
-      require_once './includes/unicode.inc';
-      require_once './includes/path.inc';
-      require_once './includes/locale.inc';
-      require_once './includes/language.inc';
+      require_once DRUPAL_ROOT . '/includes/unicode.inc';
+      require_once DRUPAL_ROOT . '/includes/path.inc';
+      require_once DRUPAL_ROOT . '/includes/locale.inc';
+      require_once DRUPAL_ROOT . '/includes/language.inc';
       drupal_language_initialize();
       $pages = drupal_strtolower($paths);
       $path = drupal_strtolower(drupal_get_path_alias($_GET['q']));
