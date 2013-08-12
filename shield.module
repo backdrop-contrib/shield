@@ -159,7 +159,7 @@ function shield_boot() {
     }
   }
 
-  $print = variable_get('shield_print', 'Hello, user: [user], pass: [pass]!');
+  $print = variable_get('shield_print', '');
   $headers = array(
     'WWW-Authenticate' => sprintf('Basic realm="%s"', strtr($print, array('[user]' => $user, '[pass]' => $pass))),
     'status' => '401 Unauthorized',
