@@ -44,14 +44,18 @@ function shield_menu() {
  * enough weight so that they set the status before shield_boot is called.
  *
  * We do it this way because calling drupal_alter() in hook_boot seems to have
- * bad side-effects
- * @param null $status
- * @return bool|null
+ * bad side-effects.
+ *
+ * @param $status
+ *   A boolean to set the current page should protected by shield module.
+ *
+ * @return
+ *   A boolean to protect the current page or not.
  */
 function shield_set_status($status = NULL) {
   $stored_status = &drupal_static(__FUNCTION__);
 
-  if(isset($status)) {
+  if (isset($status)) {
     $stored_status = $status;
   }
 
@@ -69,7 +73,7 @@ function shield_set_status($status = NULL) {
   }
 
   // Return status if it's been set.
-  if(isset($stored_status)) {
+  if (isset($stored_status)) {
     return $stored_status;
   }
 
@@ -96,13 +100,14 @@ function shield_set_status($status = NULL) {
 
   // Enable shield or not, depending on shield_method.
   $method = variable_get('shield_method', 1);
-  switch ($method){
+  switch ($method) {
     case 1:
       // Exclude matched paths from shield protection.
       if ($page_match) {
         $stored_status = FALSE;
       }
       break;
+
     case 2:
       // Exclude all un-matched paths from shield protection.
       if (!$page_match) {
@@ -117,7 +122,8 @@ function shield_set_status($status = NULL) {
 /**
  * Determines whether or not the current request will be protected.
  *
- * @return bool
+ * @return
+ *   A boolean to protect the current page or not.
  */
 function shield_get_status() {
   return shield_set_status();
@@ -128,7 +134,7 @@ function shield_get_status() {
  */
 function shield_boot() {
   // Bail if the page isn't protected by Shield.
-  if(!shield_get_status()) {
+  if (!shield_get_status()) {
     return;
   }
 
