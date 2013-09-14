@@ -67,8 +67,7 @@ function shield_set_status($status = NULL) {
   $enabled = variable_get('shield_enabled', 1);
   $user = variable_get('shield_user', '');
   $cli = (drupal_is_cli() && variable_get('shield_allow_cli', 1));
-  $cron = (basename($_SERVER['PHP_SELF']) == 'cron.php' && variable_get('shield_allow_cron', 1));
-  if (!$user || $cli || !$enabled || $cron) {
+  if (!$user || $cli || !$enabled) {
     $stored_status = FALSE;
   }
 
@@ -91,6 +90,21 @@ function shield_set_status($status = NULL) {
     drupal_language_initialize();
     $pages = drupal_strtolower($paths);
     $path = drupal_strtolower(drupal_get_path_alias($_GET['q']));
+
+    // The path does not hit Drupal's index.php but bootstrapped. For example
+    // cron.php update.php etc. The code stolen from core's request_path().
+    if (empty($path) && isset($_SERVER['REQUEST_URI'])) {
+      // Extract the path from REQUEST_URI.
+      $request_path = strtok($_SERVER['REQUEST_URI'], '?');
+      $base_path_len = strlen(rtrim(dirname($_SERVER['SCRIPT_NAME']), '\/'));
+      // Unescape and strip $base_path prefix, leaving path without a leading slash.
+      $path = substr(urldecode($request_path), $base_path_len + 1);
+
+      // Under certain conditions Apache's RewriteRule directive prepends the value
+      // assigned to $_GET['q'] with a slash. Moreover we can always have a trailing
+      // slash in place, hence we need to normalize $path.
+      $path = trim($path, '/');
+    }
     // Compare the lowercase internal and lowercase path alias (if any).
     $page_match = drupal_match_path($path, $pages);
     if ($path != $_GET['q']) {
