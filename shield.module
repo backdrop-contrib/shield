@@ -63,10 +63,9 @@ function shield_set_status($status = NULL) {
   // - there are no shield credentials set
   // - OR we're allowing Drush to bypass Shield
   // - OR Shield is disabled via the GUI
-  // - OR we're allowing cron to bypass Shield
-  $enabled = variable_get('shield_enabled', 1);
   $user = variable_get('shield_user', '');
   $cli = (drupal_is_cli() && variable_get('shield_allow_cli', 1));
+  $enabled = variable_get('shield_enabled', 1);
   if (!$user || $cli || !$enabled) {
     $stored_status = FALSE;
   }
