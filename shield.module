@@ -63,10 +63,19 @@ function shield_set_status($status = NULL) {
   // - there are no shield credentials set
   // - OR we're allowing Drush to bypass Shield
   // - OR Shield is disabled via the GUI
+  // - OR the remote address is in the white list
   $user = variable_get('shield_user', '');
   $cli = (drupal_is_cli() && variable_get('shield_allow_cli', 1));
   $enabled = variable_get('shield_enabled', 1);
-  if (!$user || $cli || !$enabled) {
+  $addresses = explode("\r\n", variable_get('shield_ignored_addresses', ''));
+  $server_address = isset($_SERVER[variable_get('shield_remote_address', 'REMOTE_ADDR')]) ? $_SERVER[variable_get('shield_remote_address', 'REMOTE_ADDR')] : FALSE;
+  if ($addresses && $server_address && array_search($server_address, $addresses) !== FALSE) {
+    $enabled_address = TRUE;
+  }
+  else {
+    $enabled_address = FALSE;
+  }
+  if (!$user || $cli || !$enabled || $enabled_address) {
     $stored_status = FALSE;
   }
 
