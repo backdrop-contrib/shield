@@ -80,7 +80,7 @@ function shield_admin_settings($form, &$form_state) {
     '#type' => 'textfield',
     '#title' => t('User'),
     '#default_value' => variable_get('shield_user', ''),
-    '#description' => t('Live it blank to disable authentication.'),
+    '#description' => t('Leave it blank to disable authentication.'),
   );
 
   $form['credentials']['shield_pass'] = array(
