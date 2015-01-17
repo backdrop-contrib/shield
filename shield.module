@@ -165,13 +165,11 @@ function shield_boot() {
   $pass = variable_get('shield_pass', '');
   if (substr(php_sapi_name(), 0, 3) == 'cgi') {
     // We have (some sort of) CGI.
-    if (isset($_SERVER['FCGI_ROLE'])) {
-      // We have FastCGI.
-      $auth_var = 'REMOTE_USER';
+    if (isset($_SERVER['REDIRECT_REMOTE_USER'])) {
+      $auth_var = 'REDIRECT_REMOTE_USER';
     }
     else {
-      // We have plain old CGI.
-      $auth_var = 'REDIRECT_REMOTE_USER';
+      $auth_var = 'REMOTE_USER';
     }
     if (!empty($_SERVER[$auth_var])) {
       list($redir_user, $redir_pw) = explode(':', base64_decode(substr($_SERVER[$auth_var], 6)));
