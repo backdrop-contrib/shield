@@ -200,3 +200,17 @@ function shield_boot() {
   drupal_send_headers($headers, TRUE);
   exit;
 }
+
+/**
+ * Implements hook_boost_is_cacheable().
+ */
+function shield_boost_is_cacheable($parts, $request_type = 'normal') {
+  // If this page is protected by Shield, disable caching pages with Boost,
+  // which would otherwise be accessible since Boost delivers pages before
+  // Shield can influence authentication.
+  if (shield_get_status()) {
+    $parts['is_cacheable'] = FALSE;
+    $parts['is_cacheable_reason'] = 'Shield prevents all pages from being cached by Boost.';
+  }
+  return $parts;
+}
