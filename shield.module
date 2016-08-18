@@ -210,7 +210,7 @@ function shield_boost_is_cacheable($parts, $request_type = 'normal') {
   // Shield can influence authentication.
   if (shield_get_status()) {
     $parts['is_cacheable'] = FALSE;
-    $parts['is_cacheable_reason'] = 'Shield prevents all pages from being cached by Boost.';
+    $parts['is_cacheable_reason'] = t('Shield prevents all pages from being cached by Boost.');
   }
   return $parts;
 }
