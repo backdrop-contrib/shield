@@ -175,7 +175,7 @@ function shield_boot() {
   $user = variable_get('shield_user', '');
   $pass = variable_get('shield_pass', '');
   // If we have mod_php.
-  if (!empty($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']) && $_SERVER['PHP_AUTH_USER'] == $user && $_SERVER['PHP_AUTH_PW'] == $pass) {
+  if (!empty($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']) && $_SERVER['PHP_AUTH_USER'] === $user && $_SERVER['PHP_AUTH_PW'] === $pass) {
     return;
   }
   elseif (substr(php_sapi_name(), 0, 3) == 'cgi' || substr(php_sapi_name(), 0, 3) == 'fpm') {
