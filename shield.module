@@ -92,7 +92,7 @@ function shield_set_status($status = NULL) {
   // Compare paths, if any have been set.
   if (!empty($paths)) {
     require_once DRUPAL_ROOT . '/includes/unicode.inc';
-    require_once DRUPAL_ROOT . '/includes/path.inc';
+    require_once DRUPAL_ROOT . '/' . variable_get('path_inc', 'includes/path.inc');
     require_once DRUPAL_ROOT . '/includes/locale.inc';
     require_once DRUPAL_ROOT . '/includes/language.inc';
     drupal_language_initialize();
