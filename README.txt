@@ -18,11 +18,17 @@ Configuration
 
 2. Visit admin/config/system/shield to enable authentication.
 
-3. Complete the user and password fields in the 'credentials' section of the Shield configuration page. When the user field is left empty, authentication will be disabled.
+3a. Complete the user and password fields in the 'credentials' section of the Shield configuration page. When the user field is left empty, authentication will be disabled.
 
-4. Alternatively, the user and password values can be configured via settings.php's $conf array:
-$conf['shield_user'] = 'username';
-$conf['shield_pass'] = 'password';
+3b. Alternatively, the user (e.g. 'FOO') and password (e.g. 'BAR') values can be configured via settings.php's $conf array:
+$conf['shield_user'] = 'FOO';
+$conf['shield_pass'] = 'BAR';
+
+3c. Alternatively, the user (e.g. 'FOO') and password (e.g. 'BAR') values can be configured via drush:
+drush vset shield_user FOO
+drush vset shield_user BAR
+# To disable:
+drush vdel shield_user
 
 Support
 -------
