@@ -101,9 +101,10 @@ function shield_set_status($status = NULL) {
 
     // The path does not hit Drupal's index.php but bootstrapped. For example
     // cron.php update.php etc. The code stolen from core's request_path().
-    if (empty($path) && isset($_SERVER['REQUEST_URI'])) {
+    $request_uri = request_uri();
+    if (empty($path) && isset($request_uri)) {
       // Extract the path from REQUEST_URI.
-      $request_path = strtok($_SERVER['REQUEST_URI'], '?');
+      $request_path = strtok($request_uri, '?');
       $base_path_len = strlen(rtrim(dirname($_SERVER['SCRIPT_NAME']), '\/'));
       // Unescape and strip $base_path prefix, leaving path without a leading slash.
       $path = substr(urldecode($request_path), $base_path_len + 1);
