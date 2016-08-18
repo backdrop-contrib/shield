@@ -163,7 +163,11 @@ function shield_boot() {
   // Attempt to authenticate user.
   $user = variable_get('shield_user', '');
   $pass = variable_get('shield_pass', '');
-  if (substr(php_sapi_name(), 0, 3) == 'cgi') {
+  // If we have mod_php.
+  if (!empty($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']) && $_SERVER['PHP_AUTH_USER'] == $user && $_SERVER['PHP_AUTH_PW'] == $pass) {
+    return;
+  }
+  elseif (substr(php_sapi_name(), 0, 3) == 'cgi' || substr(php_sapi_name(), 0, 3) == 'fpm') {
     // We have (some sort of) CGI.
     if (isset($_SERVER['REDIRECT_REMOTE_USER'])) {
       $auth_var = 'REDIRECT_REMOTE_USER';
@@ -176,12 +180,6 @@ function shield_boot() {
       if ($redir_user == $user && $redir_pw == $pass) {
         return;
       }
-    }
-  }
-  else {
-    // We have mod_php.
-    if (!empty($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']) && $_SERVER['PHP_AUTH_USER'] == $user && $_SERVER['PHP_AUTH_PW'] == $pass) {
-      return;
     }
   }
 
