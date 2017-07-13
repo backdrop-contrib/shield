@@ -35,6 +35,18 @@ function shield_uninstall() {
 }
 
 /**
+ * Enable the module
+ */
+function shield_enable() {
+  $message = t('Shield is now installed. Configure the module !shield-configuration.', array(
+    '!shield-configuration' => l(t('here'), 'admin/config/system/shield'),
+  ));
+  backdrop_set_message(filter_xss_admin($message));
+}
+
+
+
+/**
  * Implements hook_update_last_removed().
  */
 function shield_update_last_removed() {
