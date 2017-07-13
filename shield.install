@@ -16,7 +16,10 @@ function shield_requirements($phase) {
     $requirements['shield_boost'] = array(
       'title' => $t('Shield'),
       'value' => $t('Boost caching suppressed'),
-      'description' => $t('Shield prevents shielded pages from being cached by Boost. This is because a Boost cache file can be delivered to unauthenticated users via the Boost .htaccess rules before Shield can influence authentication.'),
+      'description' => $t('Shield prevents shielded pages from being cached by 
+      Boost. This is because a Boost cache file can be delivered to 
+      unauthenticated users via the Boost .htaccess rules before Shield can 
+      influence authentication.'),
       'severity' => REQUIREMENT_WARNING,
     );
   }
@@ -28,23 +31,41 @@ function shield_requirements($phase) {
  * Implements hook_uninstall().
  */
 function shield_uninstall() {
-  variable_del('shield_allow_cli');
-  variable_del('shield_enabled');
-  variable_del('shield_user');
-  variable_del('shield_pass');
-  variable_del('shield_print');
-  variable_del('shield_method');
-  variable_del('shield_paths');
-  variable_del('shield_ignored_addresses');
-  variable_del('shield_remote_address');
+  
 }
 
 /**
- * Moves shield_excluded_paths variable value to shield_paths variable.
+ * Implements hook_update_last_removed().
  */
-function shield_update_7001(&$sandbox) {
-  variable_set('shield_paths', variable_get('shield_excluded_paths', ''));
-  variable_del('shield_excluded_paths');
+function shield_update_last_removed() {
+  return 7001;
+}
 
-  return t('"shield_excluded_paths" value is moved to "shield_paths" and the unused variable is deleted.');
+/**
+ * Move shield settings from variables to config.
+ */
+function shield_update_1000() {
+  // Migrate variables to config.
+  $config = config('shield.settings');
+  $config->set('shield_allow_cli', update_variable_get('allow_cli', 1));
+  $config->set('shield_enabled', update_variable_get('enabled', 1));
+  $config->set('shield_user', update_variable_get('user', ''));
+  $config->set('shield_pass', update_variable_get('pass', ''));
+  $config->set('shield_print', update_variable_get('print', ''));
+  $config->set('shield_method', update_variable_get('method', 1));
+  $config->set('shield_paths', update_variable_get('paths', ''));
+  $config->set('shield_ignored_addresses', update_variable_get('ignored_addresses', ''));
+  $config->set('shield_remote_address', update_variable_get('remote_address', 'REMOTE_ADDR'));
+  $config->save();
+
+  // Delete variables.
+  update_variable_del('shield_allow_cli');
+  update_variable_del('shield_enabled');
+  update_variable_del('shield_user');
+  update_variable_del('shield_pass');
+  update_variable_del('shield_print');
+  update_variable_del('shield_method');
+  update_variable_del('shield_paths');
+  update_variable_del('shield_ignored_addresses');
+  update_variable_del('shield_remote_address');
 }

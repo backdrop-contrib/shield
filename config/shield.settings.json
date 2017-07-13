@@ -1,0 +1,12 @@
+{
+    "_config_name": "shield.settings",
+    "enabled": 1,
+    "allow_cli": 1,
+    "ignored_addresses": "",
+    "remote_address": "",
+    "paths": "",
+    "method": "1",
+    "user": "",
+    "pass": "",
+    "print": ""
+}

@@ -23,7 +23,7 @@ function shield_menu() {
   $items['admin/config/system/shield'] = array(
     'title' => 'Shield',
     'description' => 'Manage the settings of PHP Authentication shield.',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('shield_admin_settings'),
     'weight' => 10,
     'access arguments' => array('administer shield'),
@@ -43,7 +43,7 @@ function shield_menu() {
  * Modules wishing to have an impact on the shield status need to have a low
  * enough weight so that they set the status before shield_boot is called.
  *
- * We do it this way because calling drupal_alter() in hook_boot seems to have
+ * We do it this way because calling backdrop_alter() in hook_boot seems to have
  * bad side-effects.
  *
  * @param $status
@@ -53,7 +53,7 @@ function shield_menu() {
  *   A boolean to protect the current page or not.
  */
 function shield_set_status($status = NULL) {
-  $stored_status = &drupal_static(__FUNCTION__);
+  $stored_status = &backdrop_static(__FUNCTION__);
 
   if (isset($status)) {
     $stored_status = $status;
@@ -64,11 +64,14 @@ function shield_set_status($status = NULL) {
   // - OR we're allowing Drush to bypass Shield
   // - OR Shield is disabled via the GUI
   // - OR the remote address is in the white list
-  $user = variable_get('shield_user', '');
-  $cli = (drupal_is_cli() && variable_get('shield_allow_cli', 1));
-  $enabled = variable_get('shield_enabled', 1);
-  $addresses = explode("\r\n", variable_get('shield_ignored_addresses', ''));
-  $server_address = isset($_SERVER[variable_get('shield_remote_address', 'REMOTE_ADDR')]) ? $_SERVER[variable_get('shield_remote_address', 'REMOTE_ADDR')] : FALSE;
+  
+  $config = config('shield.settings');
+  
+  $user = $config->get('user');
+  $cli = (backdrop_is_cli() && $config->get('allow_cli'));
+  $enabled = $config->get('enabled');
+  $addresses = explode("\r\n", $config->get('ignored_addresses'));
+  $server_address = isset($_SERVER[$config->get('remote_address')]) ? $_SERVER[$config->get('remote_address')] : FALSE;
   if ($addresses && $server_address && array_search($server_address, $addresses) !== FALSE) {
     $enabled_address = TRUE;
   }
@@ -86,20 +89,21 @@ function shield_set_status($status = NULL) {
 
   // If our status hasn't already been set by something, then determine status.
   $stored_status = TRUE;
-  $paths = variable_get('shield_paths', '');
+  $paths = $config->get('paths');
   $page_match = FALSE;
 
   // Compare paths, if any have been set.
   if (!empty($paths)) {
-    require_once DRUPAL_ROOT . '/includes/unicode.inc';
-    require_once DRUPAL_ROOT . '/' . variable_get('path_inc', 'includes/path.inc');
-    require_once DRUPAL_ROOT . '/includes/locale.inc';
-    require_once DRUPAL_ROOT . '/includes/language.inc';
-    drupal_language_initialize();
-    $pages = drupal_strtolower($paths);
-    $path = drupal_strtolower(drupal_get_path_alias($_GET['q']));
+    require_once BACKDROP_ROOT . '/core/includes/unicode.inc';
+    require_once BACKDROP_ROOT . '/core/includes/path.inc';
+    require_once BACKDROP_ROOT . '/core/includes/locale.inc';
+    require_once BACKDROP_ROOT . '/core/includes/language.inc';
+    backdrop_language_initialize();
+    $pages = backdrop_strtolower($paths);
+    watchdog('shield',$paths);
+    $path = backdrop_strtolower(backdrop_get_path_alias($_GET['q']));
 
-    // The path does not hit Drupal's index.php but bootstrapped. For example
+    // The path does not hit Backdrop's index.php but bootstrapped. For example
     // cron.php update.php etc. The code stolen from core's request_path().
     $request_uri = request_uri();
     if (empty($path) && isset($request_uri)) {
@@ -115,14 +119,14 @@ function shield_set_status($status = NULL) {
       $path = trim($path, '/');
     }
     // Compare the lowercase internal and lowercase path alias (if any).
-    $page_match = drupal_match_path($path, $pages);
+    $page_match = backdrop_match_path($path, $pages);
     if ($path != $_GET['q']) {
-      $page_match = $page_match || drupal_match_path($_GET['q'], $pages);
+      $page_match = $page_match || backdrop_match_path($_GET['q'], $pages);
     }
   }
 
-  // Enable shield or not, depending on shield_method.
-  $method = variable_get('shield_method', 1);
+  // Enable shield or not, depending on method.
+  $method = $config->get('method');
   switch ($method) {
     case 1:
       // Exclude matched paths from shield protection.
@@ -160,6 +164,8 @@ function shield_boot() {
   if (!shield_get_status()) {
     return;
   }
+  
+  $config = config('shield.settings');
 
   // Announce authentication to other modules like HTTPRL and AdvAgg.
   $_SERVER['AUTH_TYPE'] = 'Basic';
@@ -172,8 +178,8 @@ function shield_boot() {
   }
 
   // Attempt to authenticate user.
-  $user = variable_get('shield_user', '');
-  $pass = variable_get('shield_pass', '');
+  $user = $config->get('user');
+  $pass = $config->get('pass');
   // If we have mod_php.
   if (!empty($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']) && $_SERVER['PHP_AUTH_USER'] === $user && $_SERVER['PHP_AUTH_PW'] === $pass) {
     return;
@@ -194,13 +200,13 @@ function shield_boot() {
     }
   }
 
-  $print = variable_get('shield_print', '');
+  $print = $config->get('print');
   $headers = array(
     'WWW-Authenticate' => sprintf('Basic realm="%s"', strtr($print, array('[user]' => $user, '[pass]' => $pass))),
     'status' => '401 Unauthorized',
   );
 
-  drupal_send_headers($headers, TRUE);
+  backdrop_send_headers($headers, TRUE);
   exit;
 }
 
