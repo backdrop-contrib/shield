@@ -5,6 +5,17 @@
  */
 
 /**
+ * Implements hook_config_info().
+ */
+function shield_config_info() {
+  $prefixes['shield.settings'] = array(
+    'label' => t('Shield Settings'),
+    'group' => t('Configuration'),
+  );
+  return $prefixes;
+}
+
+/**
  * Implements hook_perm().
  */
 function shield_permission() {
@@ -64,9 +75,9 @@ function shield_set_status($status = NULL) {
   // - OR we're allowing Drush to bypass Shield
   // - OR Shield is disabled via the GUI
   // - OR the remote address is in the white list
-  
+
   $config = config('shield.settings');
-  
+
   $user = $config->get('user');
   $cli = (backdrop_is_cli() && $config->get('allow_cli'));
   $enabled = $config->get('enabled');
@@ -100,7 +111,6 @@ function shield_set_status($status = NULL) {
     require_once BACKDROP_ROOT . '/core/includes/language.inc';
     backdrop_language_initialize();
     $pages = backdrop_strtolower($paths);
-    watchdog('shield',$paths);
     $path = backdrop_strtolower(backdrop_get_path_alias($_GET['q']));
 
     // The path does not hit Backdrop's index.php but bootstrapped. For example
@@ -164,7 +174,7 @@ function shield_boot() {
   if (!shield_get_status()) {
     return;
   }
-  
+
   $config = config('shield.settings');
 
   // Announce authentication to other modules like HTTPRL and AdvAgg.
