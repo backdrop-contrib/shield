@@ -180,8 +180,19 @@ function shield_boot() {
   // Announce authentication to other modules like HTTPRL and AdvAgg.
   $_SERVER['AUTH_TYPE'] = 'Basic';
 
-  // Look for HTTP authentication variables as URL parameters.
-  if(isset($_GET['Authorization']) && preg_match('/Basic\s+(.*)$/i', $_GET['Authorization'], $matches)) {
+  // Look for HTTP authentication from URL or other known server parameters.
+  $http_authorization = NULL;
+  if (isset($_GET['Authorization'])) {
+    $http_authorization = $_GET['Authorization'];
+  }
+  elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+    $http_authorization = $_SERVER['HTTP_AUTHORIZATION'];
+  }
+  elseif (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+    $http_authorization = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+  }
+
+  if (!empty($http_authorization) && preg_match('/Basic\s+(.*)$/i', $http_authorization, $matches)) {
     list($name, $password) = explode(':', base64_decode($matches[1]));
     $_SERVER['PHP_AUTH_USER'] = strip_tags($name);
     $_SERVER['PHP_AUTH_PW'] = strip_tags($password);
